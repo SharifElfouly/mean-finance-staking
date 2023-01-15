@@ -29,20 +29,22 @@ contract Staking {
   }
 
   function stake(uint tokenId) external {
-    permissionManager.transferFrom(msg.sender, address(this), tokenId);
-    idToOwner[tokenId] = msg.sender;
-  }
-
-  function claim(uint tokenId) external onlyOwner(tokenId) {
-
+      permissionManager.transferFrom(msg.sender, address(this), tokenId);
+      idToOwner[tokenId] = msg.sender;
   }
 
   function unstake(uint tokenId) external onlyOwner(tokenId) {
-
+      permissionManager.transferFrom(address(this), msg.sender, tokenId);
+      _claim(tokenId);
   }
 
-  function _calculateReward(uint tokenId) internal view returns (uint) {
-    return 0;
+  function _claim(uint tokenId) internal onlyOwner(tokenId) {
+      uint reward = _calculateReward(tokenId);
+      rewardToken.transfer(msg.sender, 1);
+  }
+
+  function _calculateReward(uint tokenId) internal pure returns (uint) {
+      return 0;
   }
 
   // function getPos() public {
