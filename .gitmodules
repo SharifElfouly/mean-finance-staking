@@ -7,3 +7,6 @@
 [submodule "lib/dca-v2-core"]
 	path = lib/dca-v2-core
 	url = https://github.com/mean-finance/dca-v2-core
+[submodule "lib/oracles"]
+	path = lib/oracles
+	url = https://github.com/mean-finance/oracles
