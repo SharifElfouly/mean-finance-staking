@@ -11,6 +11,13 @@ contract Staking {
   IDCAPermissionManager public immutable permissionManager;
   IERC20                public immutable rewardToken;
 
+  mapping (uint => address) public idToOwner; // owner of staking position
+
+  modifier onlyOwner(uint id) {
+    require(idToOwner[id] == msg.sender, "Staking: not owner");
+    _;
+  }
+
   constructor(
       IDCAHub               _hub,
       IDCAPermissionManager _permissionManager,
@@ -23,15 +30,19 @@ contract Staking {
 
   function stake(uint tokenId) external {
     permissionManager.transferFrom(msg.sender, address(this), tokenId);
+    idToOwner[tokenId] = msg.sender;
+  }
+
+  function claim(uint tokenId) external onlyOwner(tokenId) {
 
   }
 
-  function claim() external {
+  function unstake(uint tokenId) external onlyOwner(tokenId) {
 
   }
 
-  function unstake() external {
-
+  function _calculateReward(uint tokenId) internal view returns (uint) {
+    return 0;
   }
 
   // function getPos() public {

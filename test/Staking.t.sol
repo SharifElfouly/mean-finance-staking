@@ -24,6 +24,7 @@ contract StakingTest is Test {
   }
 
   function testStake() public {
+    // staking.hub.
     assertTrue(true);
   }
 }
