@@ -10,6 +10,8 @@ import {IERC20} from "../src/interfaces/IERC20.sol";
 address constant HUB                = 0xA5AdC5484f9997fBF7D405b9AA62A7d88883C345;
 address constant PERMISSION_MANAGER = 0x20bdAE1413659f47416f769a4B27044946bc9923;
 address constant REWARD_TOKEN       = 0xA5AdC5484f9997fBF7D405b9AA62A7d88883C345;
+address constant WETH               = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+address constant USDC               = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
 
 contract StakingTest is Test {
 
@@ -24,8 +26,15 @@ contract StakingTest is Test {
   }
 
   function testStake() public {
-    // staking.hub.
-    assertTrue(true);
+    IDCAHub(HUB).deposit(
+      USDC,
+      WETH,
+      10000,
+      uint32(10),    // amountOfSwaps
+      1 days,        // swapInterval
+      address(this), // owner
+      new IDCAPermissionManager.PermissionSet[](0)
+    );
   }
 }
 

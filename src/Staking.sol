@@ -39,11 +39,11 @@ contract Staking {
   }
 
   function _claim(uint tokenId) internal onlyOwner(tokenId) {
-      uint reward = _calculateReward(tokenId);
+      // uint reward = _calculateReward(tokenId);
       rewardToken.transfer(msg.sender, 1);
   }
 
-  function _calculateReward(uint tokenId) internal pure returns (uint) {
+  function _calculateReward() internal pure returns (uint) {
       return 0;
   }
 
