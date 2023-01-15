@@ -10,3 +10,6 @@
 [submodule "lib/oracles"]
 	path = lib/oracles
 	url = https://github.com/mean-finance/oracles
+[submodule "lib/nft-descriptors"]
+	path = lib/nft-descriptors
+	url = https://github.com/mean-finance/nft-descriptors
