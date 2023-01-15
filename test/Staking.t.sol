@@ -22,7 +22,12 @@ contract StakingTest is Test {
     staking = new Staking(
       IDCAHub(HUB),
       IDCAPermissionManager(PERMISSION_MANAGER),
-      IERC20(REWARD_TOKEN)
+      IERC20(USDC), 
+      IERC20(WETH), 
+      1000, // minAmount
+      1 days, 
+      IERC20(REWARD_TOKEN), 
+      40    // reward
     );
   }
 
@@ -51,6 +56,7 @@ contract StakingTest is Test {
       address(staking),
       positionId
     );
+
     staking.stake(positionId);
     staking.unstake(positionId);
   }
