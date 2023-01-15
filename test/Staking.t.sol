@@ -24,10 +24,10 @@ contract StakingTest is Test {
       IDCAPermissionManager(PERMISSION_MANAGER),
       IERC20(USDC), 
       IERC20(WETH), 
-      1000, // minAmount
-      1 days, 
-      IERC20(REWARD_TOKEN), 
-      40    // reward
+      1000,         // minAmount
+      1 days,       // duration
+      IERC20(USDC), // rewardToken
+      40            // reward
     );
   }
 
@@ -36,6 +36,8 @@ contract StakingTest is Test {
 
     vm.prank(USDC_WHALE);
     IERC20(USDC).transfer(address(this), AMOUNT);
+    vm.prank(USDC_WHALE);
+    IERC20(USDC).transfer(address(staking), AMOUNT);
 
     vm.prank(address(this));
     IERC20(USDC).approve(address(HUB), AMOUNT);
@@ -50,14 +52,14 @@ contract StakingTest is Test {
       new IDCAPermissionManager.PermissionSet[](0)
     );
 
-    console.log("positionId: ", positionId);
-
     IDCAPermissionManager(PERMISSION_MANAGER).approve(
       address(staking),
       positionId
     );
 
     staking.stake(positionId);
+
+    vm.warp(block.timestamp + 1 days);
     staking.unstake(positionId);
   }
 }

@@ -16,7 +16,8 @@ contract Staking {
   IERC20                public immutable rewardToken;
   uint                  public immutable reward;
 
-  mapping (uint => address) public idToOwner; // owner of staking position
+  mapping (uint => address) public idToOwner;        // owner of staking position
+  mapping (uint => uint)    public idToStakingStart; 
 
   modifier onlyOwner(uint id) {
     require(idToOwner[id] == msg.sender, "Staking: not owner");
@@ -54,20 +55,14 @@ contract Staking {
       require(position.swapInterval * position.swapsLeft >= duration);
       require(position.remaining >= minAmount);
       permissionManager.transferFrom(msg.sender, address(this), tokenId);
-      idToOwner[tokenId] = msg.sender;
+
+      idToStakingStart[tokenId] = block.timestamp;
+      idToOwner       [tokenId] = msg.sender;
   }
 
   function unstake(uint tokenId) external onlyOwner(tokenId) {
+      require(block.timestamp >= idToStakingStart[tokenId]);
       permissionManager.transferFrom(address(this), msg.sender, tokenId);
-      // _claim(tokenId);
-  }
-
-  function _claim(uint tokenId) internal onlyOwner(tokenId) {
-      // uint reward = _calculateReward(tokenId);
-      rewardToken.transfer(msg.sender, 1);
-  }
-
-  function _calculateReward() internal pure returns (uint) {
-      return 0;
+      rewardToken.transfer(msg.sender, reward);
   }
 }
