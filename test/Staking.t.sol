@@ -35,9 +35,10 @@ contract StakingTest is Test {
     uint AMOUNT = 1000;
 
     vm.prank(USDC_WHALE);
-    IERC20(USDC).transfer(address(this), AMOUNT);
-    vm.prank(USDC_WHALE);
-    IERC20(USDC).transfer(address(staking), AMOUNT);
+    IERC20(USDC).transfer(address(this), AMOUNT*2);
+
+    IERC20(USDC).approve(address(staking), AMOUNT);
+    staking.addReward(AMOUNT);
 
     vm.prank(address(this));
     IERC20(USDC).approve(address(HUB), AMOUNT);

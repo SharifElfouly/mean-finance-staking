@@ -16,6 +16,7 @@ contract Staking {
   IERC20                public immutable rewardToken;
   uint                  public immutable reward;
 
+  uint public availableRewards;
   mapping (uint => address) public idToOwner;        // owner of staking position
   mapping (uint => uint)    public idToStakingStart; 
 
@@ -25,44 +26,48 @@ contract Staking {
   }
 
   constructor(
-      IDCAHub               _hub,
-      IDCAPermissionManager _permissionManager,
-      IERC20                _fromToken, 
-      IERC20                _toToken, 
-      uint                  _minAmount, 
-      uint                  _duration, 
-      IERC20                _rewardToken, 
-      uint                  _reward
+    IDCAHub               _hub,
+    IDCAPermissionManager _permissionManager,
+    IERC20                _fromToken, 
+    IERC20                _toToken, 
+    uint                  _minAmount, 
+    uint                  _duration, 
+    IERC20                _rewardToken, 
+    uint                  _reward
   ) {
-      hub               = _hub;
-      permissionManager = _permissionManager;
-      toToken           = _toToken;
-      fromToken         = _fromToken;
-      minAmount         = _minAmount;
-      duration          = _duration;
-      rewardToken       = _rewardToken;
-      reward            = _reward;
+    hub               = _hub;
+    permissionManager = _permissionManager;
+    toToken           = _toToken;
+    fromToken         = _fromToken;
+    minAmount         = _minAmount;
+    duration          = _duration;
+    rewardToken       = _rewardToken;
+    reward            = _reward;
   }
 
   function addReward(uint amount) external {
+    availableRewards += amount;
     rewardToken.transferFrom(msg.sender, address(this), amount);
   }
 
   function stake(uint tokenId) external {
-      PositionHandler.UserPosition memory position = hub.userPosition(tokenId);
-      require(address(position.from) == address(fromToken));
-      require(address(position.to)   == address(toToken));
-      require(position.swapInterval * position.swapsLeft >= duration);
-      require(position.remaining >= minAmount);
-      permissionManager.transferFrom(msg.sender, address(this), tokenId);
+    require(availableRewards >= reward);
 
-      idToStakingStart[tokenId] = block.timestamp;
-      idToOwner       [tokenId] = msg.sender;
+    PositionHandler.UserPosition memory position = hub.userPosition(tokenId);
+    require(address(position.from) == address(fromToken));
+    require(address(position.to)   == address(toToken));
+    require(position.swapInterval * position.swapsLeft >= duration);
+    require(position.remaining >= minAmount);
+    permissionManager.transferFrom(msg.sender, address(this), tokenId);
+
+    idToStakingStart[tokenId] = block.timestamp;
+    idToOwner       [tokenId] = msg.sender;
   }
 
   function unstake(uint tokenId) external onlyOwner(tokenId) {
-      require(block.timestamp >= idToStakingStart[tokenId]);
-      permissionManager.transferFrom(address(this), msg.sender, tokenId);
-      rewardToken.transfer(msg.sender, reward);
+    require(block.timestamp >= idToStakingStart[tokenId]);
+    availableRewards -= reward;
+    permissionManager.transferFrom(address(this), msg.sender, tokenId);
+    rewardToken.transfer(msg.sender, reward);
   }
 }
