@@ -4,3 +4,6 @@
 [submodule "lib/openzeppelin-contracts"]
 	path = lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "lib/dca-v2-core"]
+	path = lib/dca-v2-core
+	url = https://github.com/mean-finance/dca-v2-core
