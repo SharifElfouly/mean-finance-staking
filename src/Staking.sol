@@ -35,7 +35,7 @@ contract Staking {
 
   function unstake(uint tokenId) external onlyOwner(tokenId) {
       permissionManager.transferFrom(address(this), msg.sender, tokenId);
-      _claim(tokenId);
+      // _claim(tokenId);
   }
 
   function _claim(uint tokenId) internal onlyOwner(tokenId) {

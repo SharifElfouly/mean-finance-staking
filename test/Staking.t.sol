@@ -52,6 +52,7 @@ contract StakingTest is Test {
       positionId
     );
     staking.stake(positionId);
+    staking.unstake(positionId);
   }
 }
 
